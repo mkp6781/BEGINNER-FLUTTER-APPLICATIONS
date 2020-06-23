@@ -49,7 +49,7 @@ class _addEventState extends State<addEvent> {
                   hoverColor: Colors.yellow[700],
                   ),
                   cursorColor: Colors.yellow[700],
-                  onSubmitted: (String text){
+                  onChanged: (String text){
                     setState(() {
                       event = text;
                       print("$event");
