@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import 'database_class.dart';
 import 'date_and_time.dart';
-import 'dart:async';
 
 class addEvent extends StatefulWidget {
   @override
@@ -16,8 +14,6 @@ class _addEventState extends State<addEvent> {
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   table_helper table;
-  Database db;
-  database_helper dbh = database_helper();
   int id = 1;
 
   @override
@@ -72,7 +68,7 @@ class _addEventState extends State<addEvent> {
             ),
             ListTile(
               title: Text(
-                "TIME : ${_time.hour}:${_time.minute}",
+                "TIME(in 24hrs: ${_time.hour}:${_time.minute}",
                 style: TextStyle(
                     color: Colors.yellow[700]
                 ),
@@ -108,11 +104,10 @@ class _addEventState extends State<addEvent> {
             FlatButton(
               onPressed: (){
                 table = table_helper(event: event , date: _date.toIso8601String() , time: _time.toString(), id: id);
+                database_helper.db.insert_event(table);
                 setState(() {
                   id+= 1;
-                  dbh.insert_event(table);
                 });
-                print("INSERTION SUCCESSFUL");
                 ctrl.clear();
                 Navigator.pop(context);
               },

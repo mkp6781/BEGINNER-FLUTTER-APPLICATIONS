@@ -9,78 +9,74 @@ final String col_3 = "DATE";
 final String col_4 = "TIME";
 
 class table_helper {
-  final String event;
-  final String date;
-  final String time;
+  String event;
+  String date;
+  String time;
   int id;
   
   table_helper({this.id, this.event , this.date, this.time});
 
   Map<String, dynamic> toMap() {
-    return {
-    col_2 : event,
-    col_3 : date,
-    col_4 : time};
+    Map<String,dynamic> map = <String , dynamic>{
+      col_2: event,
+      col_3: date,
+      col_4: time
+    };
+    return map;
+  }
+
+  table_helper.fromMap(Map<String , dynamic> map){
+    id = map[col_1];
+    event = map[col_2];
+    date = map[col_3];
+    time = map[col_4];
   }
 }
 
 class database_helper {
-  Database db;
+  database_helper._();
+  static final database_helper db = database_helper._();
+  Database _database;
 
-  database_helper() {
-    init_database();
+  Future<Database> get database async{
+    if(_database != null){
+      return _database;
+    }
+    _database = await init_database();
+    return _database;
   }
 
-  Future<void> init_database() async{
-    db= await openDatabase(
-        join(await getDatabasesPath(), "event_schedule.db"),
-        onCreate: (db, version) {
-          return db.execute("CREATE TABLE IF NOT EXISTS $tablename($col_1 INTEGER PRIMARY KEY AUTOINCREMENT, $col_2 TEXT , $col_3 DATE , $col_4 )");
+  Future<Database> init_database() async {
+    print("initialising database");
+    return await openDatabase(
+      join(await getDatabasesPath(), "event_schedule.db"),
+      version: 1,
+      onCreate: (db, version) {
+        return db.execute("CREATE TABLE IF NOT EXISTS $tablename($col_1 INTEGER PRIMARY KEY AUTOINCREMENT, $col_2 TEXT , $col_3 DATE , $col_4 DATE)");
         },
-        version: 1
     );
-    print(db);
-    print("ghs");
   }
 
   Future<void> insert_event(table_helper table) async {
-//    db = await database;
-    try{
-      await db.insert(tablename, table.toMap(), conflictAlgorithm: ConflictAlgorithm.ignore);
+    final db = await database;
+    try {
+      await db.insert(tablename, table.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.ignore);
       print("INSERTION SUCCESSFUL");
     }
-    catch(_){
+    catch (_) {
       print(_);
     }
   }
 
-  Future<List<table_helper>> event_to_list() async {
-    print(db);
-    final List<Map<String, dynamic>> event_list = await db.query(tablename);
-    return List.generate(event_list.length, (i) =>
-            table_helper(event: event_list[i][col_2],
-            date: event_list[i][col_3],
-            time: event_list[i][col_4],
-        id: event_list[i][col_1]));
+  Future<List<Map<String,dynamic>>> get_event() async {
+    final db = await database;
+    List<Map<String,dynamic>> res = await db.query(tablename);
+    return res;
+//    List<table_helper> eventList = List<table_helper>();
+//    res.forEach ((currentEvent) {
+//      table_helper eventData = table_helper.fromMap(currentEvent);
+//      eventList.add(eventData);
+//    });
   }
 }
-//
-//  Future<List<table_helper>> get_list() async{
-//    return list;
-//  }
-
-//  database_helper._();
-//  static final database_helper db = database_helper._();
-//  static Database _database;
-//  List<table_helper> list;
-
-//  database_helper(){
-//    init_database();
-//  }
-//  Future<Database> get database async{
-//    if(_database != null)
-//      return _database;
-//
-//    _database = init_database();
-//    return _database;
-//  }
