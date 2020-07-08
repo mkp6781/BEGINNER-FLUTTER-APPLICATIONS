@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqlite_api.dart';
 import 'dart:async';
 
 final String tablename = "EVENT_SCHEDULE";
@@ -18,6 +19,7 @@ class table_helper {
 
   Map<String, dynamic> toMap() {
     Map<String,dynamic> map = <String , dynamic>{
+      col_1: id,
       col_2: event,
       col_3: date,
       col_4: time
@@ -36,7 +38,7 @@ class table_helper {
 class database_helper {
   database_helper._();
   static final database_helper db = database_helper._();
-  Database _database;
+  static Database _database;
 
   Future<Database> get database async{
     if(_database != null){
@@ -57,7 +59,7 @@ class database_helper {
     );
   }
 
-  Future<void> insert_event(table_helper table) async {
+  insert_event(table_helper table) async {
     final db = await database;
     try {
       await db.insert(tablename, table.toMap(),
@@ -69,14 +71,19 @@ class database_helper {
     }
   }
 
-  Future<List<Map<String,dynamic>>> get_event() async {
+  Future<dynamic> get_event() async {
     final db = await database;
     List<Map<String,dynamic>> res = await db.query(tablename);
+    if(res.length == 0){
+      print("IT IS NULL");
+      return null;
+    }
     return res;
+  }
+}
 //    List<table_helper> eventList = List<table_helper>();
 //    res.forEach ((currentEvent) {
 //      table_helper eventData = table_helper.fromMap(currentEvent);
 //      eventList.add(eventData);
 //    });
-  }
-}
+
