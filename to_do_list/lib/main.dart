@@ -5,7 +5,10 @@ import 'database_class.dart';
 import 'dart:async';
 
 void main() =>  runApp(MaterialApp(
-  home: eventPlanner(),
+  initialRoute: '/',
+  routes: <String , WidgetBuilder >{
+    '/':(BuildContext context) => eventPlanner()
+  },
  )
 );
 
@@ -15,18 +18,10 @@ class eventPlanner extends StatefulWidget{
 }
 
 class _eventPlannerState extends State<eventPlanner> {
-  Map<String,dynamic> newEvent = {};
-  Future events;
   Future<List<Map<String,dynamic>>> eventDisplay() async{
     var resmap = await database_helper.db.get_event();
     print(resmap.runtimeType);
     return resmap;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    events = eventDisplay();
   }
 
   Widget build(BuildContext context) {
@@ -42,7 +37,7 @@ class _eventPlannerState extends State<eventPlanner> {
         backgroundColor: Colors.yellow[700],
       ),
       body: FutureBuilder(
-        future: events,
+        future: eventDisplay(),
         builder: (context , eventdata){
           switch (eventdata.connectionState){
             case ConnectionState.none:
@@ -58,42 +53,46 @@ class _eventPlannerState extends State<eventPlanner> {
                 child: Text("ACTIVE"),
               );
             case ConnectionState.done:
-              if(!newEvent.containsKey('DATE')) {
-                if(eventdata.data == null){
+              {
+                if (eventdata.data == null) {
                   break;
                 }
-                newEvent = Map<String, dynamic>.from(eventdata.data);
               }
-              print(eventdata.data.length);
               return ListView.builder(
                   itemCount: eventdata.data.length,
                   itemBuilder: (BuildContext context , int index) {
-                    print(eventdata.data[index]);
                     table_helper _event = table_helper.fromMap(eventdata.data[index]);
                     print(_event.event);
                     var date = DateTime.parse(_event.date);
                     return Card(
                       margin: EdgeInsets.fromLTRB(10, 1, 10, 1),
-                      child: Column(
+                      child: Row(
                         children: <Widget>[
-                          Text(_event.event,
-                            style: TextStyle(
-                                color: Colors.yellow[700]
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Column(
+                              children: <Widget>[
+                                Text("EVENT NAME: ${_event.event}",
+                                  style: TextStyle(
+                                      color: Colors.yellow[700]
+                                  ),
+                                ),
+                                SizedBox(height: 8,),
+                                Text("EVENT DATE: ${date.day}-${date.month}-${date.year}",
+                                  style: TextStyle(
+                                      color: Colors.yellow[700]
+                                  ),
+                                ),
+                                SizedBox(height: 8,),
+                                Text("EVENT TIME: ${_event.time.substring(10,15)} hrs",
+                                  style: TextStyle(
+                                      color: Colors.yellow[700]
+                                  ),
+                                ),
+                                SizedBox(height: 8,),
+                              ],
                             ),
                           ),
-                          SizedBox(height: 8,),
-                          Text(_event.date,
-                            style: TextStyle(
-                                color: Colors.yellow[700]
-                            ),
-                          ),
-                          SizedBox(height: 8,),
-                          Text(_event.time,
-                            style: TextStyle(
-                                color: Colors.yellow[700]
-                            ),
-                          ),
-                          SizedBox(height: 8,),
                         ],
                       ),
                     );
@@ -110,7 +109,6 @@ class _eventPlannerState extends State<eventPlanner> {
                   ),
                 ),
             );
-
           }
         ),
       backgroundColor: Colors.grey[900],

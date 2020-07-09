@@ -19,7 +19,6 @@ class table_helper {
 
   Map<String, dynamic> toMap() {
     Map<String,dynamic> map = <String , dynamic>{
-      col_1: id,
       col_2: event,
       col_3: date,
       col_4: time
@@ -71,9 +70,11 @@ class database_helper {
     }
   }
 
-  Future<dynamic> get_event() async {
+  Future<List<Map<String,dynamic>>> get_event() async {
     final db = await database;
+    print(db);
     List<Map<String,dynamic>> res = await db.query(tablename);
+    print(res);
     if(res.length == 0){
       print("IT IS NULL");
       return null;

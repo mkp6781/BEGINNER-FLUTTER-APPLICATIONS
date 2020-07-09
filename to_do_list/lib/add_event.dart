@@ -99,15 +99,21 @@ class _addEventState extends State<addEvent> {
                     ),
                 ),
                 SizedBox(height: 50),
-                FlatButton(
+                RaisedButton(
+                  highlightColor: Colors.blueAccent,
+                  color: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    side: BorderSide(color: Colors.lightBlue)
+                  ),
                   onPressed: (){
                     table = table_helper(event: event , date: _date.toIso8601String() , time: _time.toString(), id: id);
                     database_helper.db.insert_event(table);
-//                    setState(() {
-//                      id+= 1;
-//                    });
+                    setState(() {
+                      id+= 1;
+                    });
                     ctrl.clear();
-                    Navigator.pop(context);
+                    Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
                   },
                   child: Text("SET REMINDER",
                   style: TextStyle(
