@@ -66,34 +66,31 @@ class _eventPlannerState extends State<eventPlanner> {
                     var date = DateTime.parse(_event.date);
                     return Card(
                       margin: EdgeInsets.fromLTRB(10, 1, 10, 1),
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(0.0),
-                            child: Column(
-                              children: <Widget>[
-                                Text("EVENT NAME: ${_event.event}",
-                                  style: TextStyle(
-                                      color: Colors.yellow[700]
-                                  ),
-                                ),
-                                SizedBox(height: 8,),
-                                Text("EVENT DATE: ${date.day}-${date.month}-${date.year}",
-                                  style: TextStyle(
-                                      color: Colors.yellow[700]
-                                  ),
-                                ),
-                                SizedBox(height: 8,),
-                                Text("EVENT TIME: ${_event.time.substring(10,15)} hrs",
-                                  style: TextStyle(
-                                      color: Colors.yellow[700]
-                                  ),
-                                ),
-                                SizedBox(height: 8,),
-                              ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Column(
+                          children: <Widget>[
+                            Text("${_event.event.toUpperCase()}",
+                              style: TextStyle(
+                                  color: Colors.yellow[700],
+                                fontSize: 20
+                              ),
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 8,),
+                            Text("EVENT DATE: ${date.day}-${date.month}-${date.year}",
+                              style: TextStyle(
+                                  color: Colors.yellow[700]
+                              ),
+                            ),
+                            SizedBox(height: 8,),
+                            Text("EVENT TIME: ${_event.time.substring(10,15)} hrs",
+                              style: TextStyle(
+                                  color: Colors.yellow[700]
+                              ),
+                            ),
+                            SizedBox(height: 8,),
+                          ],
+                        ),
                       ),
                     );
                   }
